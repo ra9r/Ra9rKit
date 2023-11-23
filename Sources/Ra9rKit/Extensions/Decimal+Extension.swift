@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  Decimal+Extention.swift
+//  Ra9rKit
 //
 //  Created by Rodney Aiglstorfer on 11/23/23.
 //
