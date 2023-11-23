@@ -71,9 +71,12 @@ public struct SimpleMenuPicker<OPT : Hashable>: View {
     }
 }
 
-//#Preview {
-//    Form {
-//        SimpleMenuPicker<String>("Sample", selection: .constant("Foo"), options: ["Foo", "Bar", "Gar"], label: \.localizedUppercase)
-//    }
-//}
+#Preview {
+    Form {
+        SimpleMenuPicker<String>("Sample", 
+                                 selection: .constant("Foo"),
+                                 options: ["Foo", "Bar", "Gar"],
+                                 label: \.localizedUppercase)
+    }
+}
 
