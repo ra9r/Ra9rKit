@@ -7,16 +7,6 @@
 
 import SwiftUI
 
-private func uncombine(_ value: Float) -> (wholeNumber: Int, decimalNumber: Int) {
-    (wholeNumber: Int(value), decimalNumber: Int( ((value - Float(Int(value))) * 10)) )
-}
-
-/// An internal function that will produce a float value that is the combination of a
-/// wholenumber and a decimal number from the picker
-private func combine(_ wholeNumber: Int, _ decimalNumber: Int) -> Float {
-    Float(wholeNumber) + (Float(decimalNumber) * 0.1)
-}
-
 public struct DecimalPicker: View {
     /// A binding to a variable that will hold the result of the picker
     @Binding var value: Float
@@ -33,7 +23,7 @@ public struct DecimalPicker: View {
         self._value = value
         self.wholeNumbers = [Int](lowerLimit...upperLimit)
         
-        let parts = uncombine(value.wrappedValue)
+        let parts = value.wrappedValue.uncombine()
         self.wholeNumber = parts.wholeNumber
         self.decimalNumber = parts.decimalNumber
     }
@@ -50,10 +40,10 @@ public struct DecimalPicker: View {
                 }
             }
         }.onChange(of: wholeNumber) { oldNumber, newNumber in
-            let newVal = combine(newNumber, self.decimalNumber)
+            let newVal = Float(newNumber, self.decimalNumber)
             value = newVal
         }.onChange(of: decimalNumber) { oldNumber, newNumber in
-            let newVal = combine(self.wholeNumber, newNumber)
+            let newVal = Float(self.wholeNumber, newNumber)
             value = newVal
         }
     }
