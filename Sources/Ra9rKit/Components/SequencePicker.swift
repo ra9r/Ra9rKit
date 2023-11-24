@@ -39,7 +39,7 @@ public struct SequencePicker<T : Hashable>: View {
                     ZStack {
                         if isSelected(item) {
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.red.gradient)
+                                .fill(Color.accentColor.gradient)
                                 .matchedGeometryEffect(id: "itemBG", in: namespace)
                       
                             
@@ -111,6 +111,9 @@ extension SequencePicker {
         }
         var body: some View {
             Group {
+                if let selectedDate {
+                    Text(selectedDate.formatted("MMM dd, YYYY"))
+                }
                 SequencePicker(sequence: dates,
                                selected: $selectedDate,
                                current: Date.now) { date in
@@ -121,7 +124,9 @@ extension SequencePicker {
                 } equals: { dl, dr in
                     return  dl.sameAs(dr)
                 }
-                
+                if let selectedCycle {
+                    Text("Cycle \(selectedCycle)")
+                }
                 SequencePicker(sequence: cycles,
                                selected: $selectedCycle,
                                current: 5) { cycle in
