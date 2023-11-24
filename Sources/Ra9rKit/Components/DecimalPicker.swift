@@ -29,16 +29,22 @@ public struct DecimalPicker: View {
     }
     
     public var body: some View {
-        VStack {
-            GeometryReader { geometry in
-                HStack(spacing: 5) {
-                    Spacer()
-                    picker(value: $wholeNumber, range: self.wholeNumbers, geometry: geometry)
-                    
-                    picker(value: $decimalNumber, range: self.decimalValues, prefix: ".",suffix: "kg", geometry: geometry)
-                    Spacer()
+        HStack {
+            Picker("Whole Number", selection: $wholeNumber) {
+                ForEach(0..<1000) { number in
+                    Text("\(number)").tag(number)
                 }
             }
+            .pickerStyle(WheelPickerStyle())
+            
+            Text(".")
+            
+            Picker("Decimal", selection: $decimalNumber) {
+                ForEach(0..<10) { number in
+                    Text("\(number)").tag(number)
+                }
+            }
+            .pickerStyle(WheelPickerStyle())
         }.onChange(of: wholeNumber) { oldNumber, newNumber in
             let newVal = Float(newNumber, self.decimalNumber)
             value = newVal
@@ -47,23 +53,17 @@ public struct DecimalPicker: View {
             value = newVal
         }
     }
-    
-    @ViewBuilder
-    public func picker(value: Binding<Int>, range: [Int], prefix: String = "", suffix: String = "", geometry: GeometryProxy) -> some View{
-        Picker(selection: value, label: Text("")) {
-            ForEach(0 ..< range.count, id: \.self) { index in
-                Text("\(prefix)\(range[index]) \(suffix)").tag(range[index])
-                    .scaleEffect(x: 3)
-            }
-        }
-        .pickerStyle(.inline)
-        .scaleEffect(x: 0.333)
-        .frame(width: geometry.size.width/4, alignment: .center)
-    }
 }
 
 #Preview {
-    Group {
-        DecimalPicker(.constant(144.3))
+    struct Preview: View {
+        @State var weight: Float = 144.3
+        var body: some View {
+            Text("\(weight.formatPrecision(1)) kgs").font(.headline)
+            DecimalPicker($weight)
+                .padding(50)
+        }
     }
+    
+    return Preview()
 }

@@ -11,7 +11,7 @@ public struct MenuPicker<T : Hashable>: View {
     var label: String
     @Binding var selectedOption: T
     var optionList: Array<T>
-    var icon: ((T) -> ImageResource)? = nil
+    var icon: ((T) -> Image)? = nil
     var title: (T) -> String
     
     public var body: some View {
@@ -25,7 +25,7 @@ public struct MenuPicker<T : Hashable>: View {
                     } label: {
                         if let icon = self.icon {
                             HStack {
-                                Image(icon(t))
+                                icon(t)
                                 Text(title(t))
                             }
                         } else {
