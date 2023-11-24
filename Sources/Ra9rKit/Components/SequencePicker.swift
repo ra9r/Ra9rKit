@@ -14,6 +14,7 @@ public struct SequencePicker<T : Hashable>: View {
     var label: (T) -> String
     var value: (T) -> String
     var equals: (T, T) -> Bool
+    @Namespace private var namespace
     
     public init(sequence: [T], 
          selected: Binding<T?>,
@@ -25,9 +26,6 @@ public struct SequencePicker<T : Hashable>: View {
         self.sequence = sequence
         self.current = current
         self._selected = selected
-        if selected.wrappedValue == nil {
-            self._selected.wrappedValue = current
-        }
         self.label = label
         self.value = value
         self.equals = equals
@@ -36,16 +34,20 @@ public struct SequencePicker<T : Hashable>: View {
     public var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
-                ForEach(sequence, id: \.self) { item in
+                ForEach(sequence.indices, id: \.self) { ndx in
+                    let item = sequence[ndx]
                     ZStack {
                         if isSelected(item) {
                             RoundedRectangle(cornerRadius: 20)
                                 .fill(Color.red.gradient)
+                                .matchedGeometryEffect(id: "itemBG", in: namespace)
+                      
+                            
                         }
                         VStack(alignment: .center) {
                             Spacer()
                             Text(label(item))
-                                .minimumScaleFactor(0.6)
+                                .minimumScaleFactor(0.5)
                             Text(value(item))
                             if isCurrent(item) {
                                 Circle()
@@ -61,7 +63,10 @@ public struct SequencePicker<T : Hashable>: View {
                     .foregroundColor(isSelected(item) ? Color.white : Color.black)
                     .frame(width: 30, height: 50)
                     .onTapGesture {
-                        self.selected = item
+                        withAnimation(.spring){
+                            self.selected = item
+                        }
+                        
                     }
                 }
             }
@@ -70,6 +75,11 @@ public struct SequencePicker<T : Hashable>: View {
         }
         .scrollTargetBehavior(.viewAligned)
         .frame(height: 80)
+        .onAppear() {
+            if selected == nil {
+                self.selected = current
+            }
+        }
     }
 }
 
@@ -84,4 +94,46 @@ extension SequencePicker {
         }
         return false
     }
+}
+
+#Preview {
+    struct Preview: View {
+        @State var selectedDate: Date?
+        @State var selectedCycle: Int?
+        var dates: [Date] {
+            let now = Date.now
+            return Array(-6...24).map { days in
+                return now.addInterval(days: days)
+            }
+        }
+        var cycles: [Int] {
+            return Array(1...12)
+        }
+        var body: some View {
+            Group {
+                SequencePicker(sequence: dates,
+                               selected: $selectedDate,
+                               current: Date.now) { date in
+                    date.formatted("E")
+                } value: { date in
+                    let day = Calendar.current.component(.day, from: date)
+                    return "\(day)"
+                } equals: { dl, dr in
+                    return  dl.sameAs(dr)
+                }
+                
+                SequencePicker(sequence: cycles,
+                               selected: $selectedCycle,
+                               current: 5) { cycle in
+                    return "Cycle"
+                } value: { cycle in
+                    return "\(cycle)"
+                } equals: { cl, cr in
+                    return  cl == cr
+                }
+            }.padding()
+        }
+    }
+    
+    return Preview()
 }

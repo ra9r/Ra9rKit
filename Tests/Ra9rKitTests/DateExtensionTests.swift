@@ -24,7 +24,7 @@ class DateExtensionTests: XCTestCase {
     
     func testFormat() {
         let date = Date(timeIntervalSince1970: 0) // 1st Jan 1970
-        let formattedDate = date.format("yyyy-MM-dd")
+        let formattedDate = date.formatted("yyyy-MM-dd")
         XCTAssertEqual(formattedDate, "1970-01-01")
     }
     

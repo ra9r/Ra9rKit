@@ -12,7 +12,7 @@ extension Date {
     ///
     /// - Parameter pattern: A string representing the date format pattern (e.g., "yyyy-MM-dd").
     /// - Returns: A formatted string representation of the date.
-    public func format(_ pattern: String) -> String {
+    public func formatted(_ pattern: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = pattern
         
