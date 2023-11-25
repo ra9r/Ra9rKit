@@ -68,7 +68,7 @@ extension Date {
     /// - Parameter date: The date to compare against. Defaults to the current date and time.
     /// - Returns: A string describing the current date relative to the specified date.
     public func relative(to date: Date = .now) -> String {
-        if self > date.addInterval(hours: 12) {
+        if self > date.addInterval(hours: -12) {
             let dateFormatter = RelativeDateTimeFormatter()
             return dateFormatter.localizedString(for: self, relativeTo: Date.now)
         } else {
