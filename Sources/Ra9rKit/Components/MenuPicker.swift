@@ -14,6 +14,18 @@ public struct MenuPicker<T : Hashable>: View {
     var icon: ((T) -> Image)? = nil
     var title: (T) -> String
     
+    public init(_ label: String,
+                selection: Binding<T>,
+                options: Array<T>,
+                title: @escaping (T) -> String,
+                icon: ((T) -> Image)? = nil) {
+        self.label = label
+        self._selectedOption = selection
+        self.optionList = options
+        self.title = title
+        self.icon = icon
+    }
+    
     public var body: some View {
         HStack {
             Text(label)
@@ -47,10 +59,12 @@ public struct MenuPicker<T : Hashable>: View {
 
 #Preview {
     Form {
-        MenuPicker(label: "Sample Options",
-                   selectedOption: .constant("One"),
-                   optionList: ["One", "Two", "Three"]) { option in
+        MenuPicker("Sample Options",
+                   selection: .constant("One"),
+                   options: ["One", "Two", "Three"]) { option in
             option
+        } icon: { option in
+            Image(systemName: "plus")
         }
     }
 }
