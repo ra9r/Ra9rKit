@@ -9,18 +9,18 @@ import SwiftUI
 
 public struct MenuPicker<T : Hashable>: View {
     var label: String
-    @Binding var selectedOption: T
+    @Binding var selection: T?
     var optionList: Array<T>
     var icon: ((T) -> Image)? = nil
     var title: (T) -> String
     
     public init(_ label: String,
-                selection: Binding<T>,
+                selection: Binding<T?>,
                 options: Array<T>,
                 title: @escaping (T) -> String,
                 icon: ((T) -> Image)? = nil) {
         self.label = label
-        self._selectedOption = selection
+        self._selection = selection
         self.optionList = options
         self.title = title
         self.icon = icon
@@ -33,7 +33,7 @@ public struct MenuPicker<T : Hashable>: View {
             Menu {
                 ForEach(optionList, id:\.self) { t in
                     Button {
-                        selectedOption = t
+                        selection = t
                     } label: {
                         if let icon = self.icon {
                             HStack {
@@ -46,25 +46,40 @@ public struct MenuPicker<T : Hashable>: View {
                     }
                 }
             } label: {
-                Text(title(selectedOption))
-                    .foregroundColor(Color.black)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                Image(systemName: "chevron.up.chevron.down")
-                    .padding(.leading, 5)
+                if let selection {
+                    Text(title(selection))
+                        .foregroundColor(Color.black)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .padding(.leading, 5)
+                } else {
+                    Text("- Select -")
+                        .foregroundColor(Color.black)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .opacity(0.5)
+                }
             }
         }
     }
 }
 
 #Preview {
-    Form {
-        MenuPicker("Sample Options",
-                   selection: .constant("One"),
-                   options: ["One", "Two", "Three"]) { option in
-            option
-        } icon: { option in
-            Image(systemName: "plus")
+    struct Preview : View {
+        @State var selectedOption: String?
+        var body: some View {
+            Form {
+                MenuPicker("Sample Options",
+                           selection: $selectedOption,
+                           options: ["One", "Two", "Three"]) { option in
+                    option
+                } icon: { option in
+                    Image(systemName: "plus")
+                }
+            }
         }
     }
+    
+    return Preview()
 }
