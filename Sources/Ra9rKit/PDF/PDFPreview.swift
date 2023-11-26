@@ -13,6 +13,10 @@ import PDFKit
 public struct PDFPreview: UIViewRepresentable {
     var url: URL
     
+    public init(url: URL) {
+        self.url = url
+    }
+    
     public func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
         pdfView.autoScales = true
