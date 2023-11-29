@@ -7,77 +7,72 @@
 
 import SwiftUI
 
-public struct SequencePicker<T : Hashable>: View {
+public struct SequencePicker<T : Hashable, Content>: View where Content: View {
     @Binding var selected: T?
     var sequence: [T]
     var current: T
-    var label: (T) -> String
-    var value: (T) -> String
-    var equals: (T, T) -> Bool
+    let content: (T, Bool, Bool) -> Content
+    
     @Namespace private var namespace
     
-    public init(sequence: [T], 
-         selected: Binding<T?>,
-         current: T,
-         label: @escaping (T) -> String,
-         value: @escaping (T) -> String,
-         equals: @escaping (T, T) -> Bool)
+    public init(sequence: [T],
+                selected: Binding<T?>,
+                current: T,
+                content: @escaping (T, Bool, Bool) -> Content)
     {
         self.sequence = sequence
         self.current = current
         self._selected = selected
-        self.label = label
-        self.value = value
-        self.equals = equals
+        self.content = content
     }
     
     public var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack {
-                ForEach(sequence.indices, id: \.self) { ndx in
-                    let item = sequence[ndx]
-                    ZStack {
-                        if isSelected(item) {
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.accentColor.gradient)
-                                .matchedGeometryEffect(id: "itemBG", in: namespace)
-                      
-                            
-                        }
-                        VStack(alignment: .center) {
-                            Spacer()
-                            Text(label(item))
-                                .minimumScaleFactor(0.5)
-                            Text(value(item))
-                            if isCurrent(item) {
-                                Circle()
-                                    .fill(isSelected(item) ? Color.white : Color.black)
-                                    .frame(width: 5, height: 5)
-                            } else {
-                                Circle()
-                                    .fill(Color.white.opacity(0))
-                                    .frame(width: 5, height: 5)
+        ScrollViewReader { pos in
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack {
+                    ForEach(sequence, id: \.self) { item in
+                        let selected = isSelected(item)
+                        ZStack {
+                            if selected {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color.accentColor.gradient)
+                                    .matchedGeometryEffect(id: "itemBG", in: namespace)
                             }
-                            Spacer()
-                        }                  }
-                    .foregroundColor(isSelected(item) ? Color.white : Color.black)
-                    .frame(width: 30, height: 50)
-                    .onTapGesture {
-                        withAnimation(.spring){
-                            self.selected = item
+                            VStack(alignment: .center) {
+                                Spacer()
+                                content(item, isCurrent(item), selected)
+                                if isCurrent(item) {
+                                    Circle()
+                                        .fill(selected ? Color.white : Color.black)
+                                        .frame(width: 5, height: 5)
+                                } else {
+                                    Circle()
+                                        .fill(Color.white.opacity(0))
+                                        .frame(width: 5, height: 5)
+                                }
+                                Spacer()
+                            }
                         }
-                        
+                        .foregroundColor(selected ? Color.white : Color.black)
+                        .frame(width: 30, height: 50)
+                        .onTapGesture {
+                            withAnimation(.spring){
+                                self.selected = item
+                            }
+                        }
+                        .id(item)
                     }
                 }
+                .scrollTargetLayout()
+                
             }
-            .scrollTargetLayout()
-            
-        }
-        .scrollTargetBehavior(.viewAligned)
-        .frame(height: 80)
-        .onAppear() {
-            if selected == nil {
-                self.selected = current
+            .scrollTargetBehavior(.viewAligned)
+            .frame(height: 80)
+            .onAppear() {
+                if selected == nil {
+                    self.selected = current
+                    pos.scrollTo(current)
+                }
             }
         }
     }
@@ -85,57 +80,55 @@ public struct SequencePicker<T : Hashable>: View {
 
 extension SequencePicker {
     func isCurrent(_ item: T) -> Bool {
-        return self.equals(item, self.current)
+        return item.hashValue == self.current.hashValue
     }
     
     func isSelected(_ item: T) -> Bool {
         if let selected = self.selected {
-            return self.equals(item, selected)
+            return item.hashValue == selected.hashValue
         }
         return false
     }
 }
 
-#Preview {
+#Preview("Cycle Example") {
+    struct Cycle: Hashable {
+        var index: Int
+        var start: Date
+    }
+    
+    func makeSamples() -> [Cycle] {
+        let now = Date.now
+        let cal = Calendar.current
+        do {
+            return try Array(0...24).map<Cycle>({ ndx in
+                let start = cal.date(byAdding: .day, value: ndx, to: now)
+                return Cycle(index: ndx, start: start!)
+            })
+        } catch {
+            return []
+        }
+    }
+    
+   
     struct Preview: View {
-        @State var selectedDate: Date?
-        @State var selectedCycle: Int?
-        var dates: [Date] {
-            let now = Date.now
-            return Array(-6...24).map { days in
-                return now.addInterval(days: days)
-            }
-        }
-        var cycles: [Int] {
-            return Array(1...12)
-        }
+        @State var selectedCycle: Cycle?
+        var cycles: [Cycle] = makeSamples()
         var body: some View {
             Group {
-                if let selectedDate {
-                    Text(selectedDate.formatted("MMM dd, YYYY"))
-                }
-                SequencePicker(sequence: dates,
-                               selected: $selectedDate,
-                               current: Date.now) { date in
-                    date.formatted("E")
-                } value: { date in
-                    let day = Calendar.current.component(.day, from: date)
-                    return "\(day)"
-                } equals: { dl, dr in
-                    return  dl.sameAs(dr)
-                }
                 if let selectedCycle {
-                    Text("Cycle \(selectedCycle)")
+                    Text(selectedCycle.start.formatted("MMM dd, YYYY"))
                 }
                 SequencePicker(sequence: cycles,
                                selected: $selectedCycle,
-                               current: 5) { cycle in
-                    return "Cycle"
-                } value: { cycle in
-                    return "\(cycle)"
-                } equals: { cl, cr in
-                    return  cl == cr
+                               current: cycles[10]) { item, isCurrent, isSelected in
+                    Group {
+                        Text("Cycle")
+                            .minimumScaleFactor(0.6)
+                        Text("\(item.index)")
+                    }
                 }
+                
             }.padding()
         }
     }
