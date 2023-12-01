@@ -23,8 +23,4 @@ extension Float {
         self = Float(wholeNumber) + (Float(decimalNumber) * 0.1)
     }
     
-    init(_ value: String) {
-        self = (value as NSString).floatValue
-    }
-    
 }
