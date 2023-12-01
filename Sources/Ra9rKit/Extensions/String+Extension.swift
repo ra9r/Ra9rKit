@@ -8,7 +8,7 @@
 import Foundation
 
 extension String {
-    var floatValue: Float? {
+    public var floatValue: Float? {
         let numberFormatter = NumberFormatter()
         return numberFormatter.number(from: self)?.floatValue
     }
