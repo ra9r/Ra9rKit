@@ -8,6 +8,8 @@
 import Foundation
 
 extension Calendar {
+    
+    /// Computes the number of day between two dates inclusive or exclusive.
     public func daysBetween(_ from: Date, and to: Date, inclusive: Bool = false) -> Int {
         let numberOfDays = dateComponents([.day], from: from, to: to)
         

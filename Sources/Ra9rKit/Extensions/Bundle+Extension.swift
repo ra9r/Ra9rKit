@@ -8,6 +8,7 @@
 import Foundation
 
 extension Bundle {
+    /// Decodes a JSON file stored in the application bundle
     public func decode<T: Decodable>(_ type: T.Type, from filename: String) -> T {
         guard let json = url(forResource: filename, withExtension: nil) else {
             fatalError("Failed to locate \(filename) in app bundle.")
