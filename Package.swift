@@ -34,6 +34,7 @@ let package = Package(
         .target(
             name: "Ra9rAuth",
             dependencies: [
+                "Ra9rCore",
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
                 //                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
                 //                .product(name: "FirebaseAnalyticsSwift", package: "firebase-ios-sdk"),
@@ -44,7 +45,8 @@ let package = Package(
                 .product(name: "GoogleSignInSwift", package: "GoogleSignIn-iOS")
             ]),
         .target(
-            name: "Ra9rUI"),
+            name: "Ra9rUI",
+            dependencies: ["Ra9rCore"]),
         .target(
             name: "Ra9rPDF"),
         .testTarget(

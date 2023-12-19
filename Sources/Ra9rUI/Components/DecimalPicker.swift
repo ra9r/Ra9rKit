@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Ra9rCore
 
 public struct DecimalPicker: View {
     /// A binding to a variable that will hold the result of the picker
