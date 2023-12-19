@@ -9,16 +9,46 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "Ra9rKit",
-            targets: ["Ra9rKit"]),
+            name: "Ra9rCore",
+            targets: ["Ra9rCore"]),
+        .library(
+            name: "Ra9rAuth",
+            targets: ["Ra9rAuth"]),
+        .library(
+            name: "Ra9rUI",
+            targets: ["Ra9rUI"]),
+        .library(
+            name: "Ra9rPDF",
+            targets: ["Ra9rPDF"])
+    ],
+    dependencies: [
+        // Dependencies declare other packages that this package depends on.
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "10.19.1")),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", .upToNextMajor(from: "7.0.0"))
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "Ra9rKit"),
+            name: "Ra9rCore"),
+        .target(
+            name: "Ra9rAuth",
+            dependencies: [
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
+                //                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                //                .product(name: "FirebaseAnalyticsSwift", package: "firebase-ios-sdk"),
+                //                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
+                //                .product(name: "FirebaseFirestoreSwift", package: "firebase-ios-sdk"),
+                //                .product(name: "FirebaseStorage", package: "firebase-ios-sdk"),
+                    .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
+                .product(name: "GoogleSignInSwift", package: "GoogleSignIn-iOS")
+            ]),
+        .target(
+            name: "Ra9rUI"),
+        .target(
+            name: "Ra9rPDF"),
         .testTarget(
-            name: "Ra9rKitTests",
-            dependencies: ["Ra9rKit"]),
+            name: "Ra9rCoreTests",
+            dependencies: ["Ra9rCore"]),
     ]
 )

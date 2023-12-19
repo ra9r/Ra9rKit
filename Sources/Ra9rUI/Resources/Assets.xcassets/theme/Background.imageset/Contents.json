@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "DoodleBG.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
