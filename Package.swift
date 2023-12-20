@@ -36,13 +36,13 @@ let package = Package(
             dependencies: [
                 "Ra9rCore",
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
-                //                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
-                //                .product(name: "FirebaseAnalyticsSwift", package: "firebase-ios-sdk"),
-                //                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
-                //                .product(name: "FirebaseFirestoreSwift", package: "firebase-ios-sdk"),
-                //                .product(name: "FirebaseStorage", package: "firebase-ios-sdk"),
-                    .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
                 .product(name: "GoogleSignInSwift", package: "GoogleSignIn-iOS")
+                // .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                // .product(name: "FirebaseAnalyticsSwift", package: "firebase-ios-sdk"),
+                // .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
+                // .product(name: "FirebaseFirestoreSwift", package: "firebase-ios-sdk"),
+                // .product(name: "FirebaseStorage", package: "firebase-ios-sdk"),
             ]),
         .target(
             name: "Ra9rUI",

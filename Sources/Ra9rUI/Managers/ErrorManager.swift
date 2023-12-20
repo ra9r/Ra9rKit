@@ -26,7 +26,7 @@ public class ErrorManager : ObservableObject {
         }
     }
     
-    init() {
+    public init() {
         
     }
 }

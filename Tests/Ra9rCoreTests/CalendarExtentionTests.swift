@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Ra9rKit
+@testable import Ra9rCore
 
 
 class CalendarExtensionTests: XCTestCase {
