@@ -10,9 +10,9 @@ import SwiftUI
 @MainActor
 public class ErrorManager : ObservableObject {
     
-    @Published var error: Error?
+    @Published public var error: Error?
     
-    var showError: Binding<Bool> {
+    public var showError: Binding<Bool> {
         Binding<Bool> {
             guard let error = self.error else {
                 return false
