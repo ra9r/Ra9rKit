@@ -40,8 +40,7 @@ public final class AuthenticationManager : ObservableObject {
         return Auth.auth().currentUser
     }
     
-    // Required for SignIn With Apple -> Firebase Auth
-    internal var currentNonce: String?
+    
     
     public init() {
         guard let currentUser else {

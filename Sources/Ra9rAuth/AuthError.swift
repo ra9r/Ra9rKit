@@ -7,6 +7,9 @@
 
 import Foundation
 
-public AuthError : Error {
-    case failedToAuth
+public enum AuthError : LocalizedError {
+    case credential
+    case nonce
+    case identityToken
+    case identityTokenString
 }
