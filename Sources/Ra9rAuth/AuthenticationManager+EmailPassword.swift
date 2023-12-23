@@ -16,17 +16,14 @@ extension AuthenticationManager {
     public func createUser(withEmail email: String, password: String) async throws {
         let authDataResult = try await Auth.auth().createUser(withEmail: email, password: password)
         self.profile = Profile(user: authDataResult.user)
-    }
-    
-    public func signOut() throws {
-        try Auth.auth().signOut()
-        self.profile = nil
+        self.state = .authenticated
     }
     
     public func signIn(withEmail email: String, password: String) async throws {
         let authDataResult = try await Auth.auth().signIn(withEmail: email, password: password)
         
         self.profile = Profile(user: authDataResult.user)
+        self.state = .authenticated
     }
     
 }

@@ -16,5 +16,6 @@ extension AuthenticationManager {
     public func signInAnnonymously() async throws {
         let authDataResult = try await Auth.auth().signInAnonymously()
         self.profile = Profile(user: authDataResult.user)
+        self.state = .anonymous
     }
 }

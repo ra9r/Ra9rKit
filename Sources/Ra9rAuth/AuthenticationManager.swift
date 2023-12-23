@@ -14,10 +14,21 @@ import FirebaseAuth
 public final class AuthenticationManager : ObservableObject {
     
     @Published public var profile: Profile?
+    @Published public var state: AuthState = .mustRegister
+    @Published public var biometricsEnabled: Bool = false
     
     public var needsAuthentication: Binding<Bool> {
         Binding<Bool> {
-            self.profile == nil
+            switch self.state {
+                case .anonymous:
+                    fallthrough
+                case .authenticated:
+                    return false
+                case .mustRegister:
+                    fallthrough
+                case .mustSignIn:
+                    return true
+            }
         } set: { newShouldAuth in
             if newShouldAuth == true {
                 self.profile = nil
@@ -41,6 +52,20 @@ public final class AuthenticationManager : ObservableObject {
         self.profile = Profile(user: currentUser)
     }
 
+    public var altProviders: [ProviderID] {
+        guard let user = currentUser else {
+            return []
+        }
+        return user.providerData.map { userInfo in
+            return ProviderID(rawValue: userInfo.providerID)!
+        }
+    }
+    
+    public func signOut() throws {
+        try Auth.auth().signOut()
+        self.profile = nil
+        self.state = .mustRegister
+    }
 }
 
 

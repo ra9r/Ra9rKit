@@ -5,7 +5,7 @@
 //  Created by Rodney Aiglstorfer on 12/20/23.
 //
 
-import Foundation
+import SwiftUI
 
 import FirebaseCore
 import FirebaseAuth
@@ -21,6 +21,46 @@ extension AuthenticationManager {
     public func signInWithGoogle() async throws {
         guard let clientID else { return }
         
+        guard let credential = try await googleAuth(clientID: clientID) else { return }
+        
+        let result = try await Auth.auth().signIn(with: credential)
+        self.profile = Profile(user: result.user)
+        self.state = .authenticated
+    }
+    
+    public func linkWithGoogle() async throws  {
+        guard let clientID else { return }
+        
+        guard let credential = try await googleAuth(clientID: clientID) else { return }
+        
+        try await currentUser?.link(with: credential)
+    }
+    
+    public func unlinkWithGoogle() {
+        currentUser?.unlink(fromProvider: ProviderID.google.rawValue)
+    }
+    
+    public var linkedWithGoogle: Binding<Bool> {
+        Binding<Bool> {
+            return self.altProviders.contains { provider in
+                provider == .google
+            }
+        } set: { shouldLink in
+            Task {
+                do {
+                    if shouldLink {
+                        try await self.linkWithGoogle()
+                    } else {
+                        self.unlinkWithGoogle()
+                    }
+                } catch {
+                    print("Binding Error: \(error)")
+                }
+            }
+        }
+    }
+    
+    private func googleAuth(clientID: String) async throws -> AuthCredential? {
         // Create Google Sign In configuration object.
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
@@ -30,7 +70,8 @@ extension AuthenticationManager {
               let rootViewController = window.rootViewController else {
             print("There is no root view controller")
             self.profile = nil
-            return
+            self.state = .mustRegister
+            return nil
         }
         
         let userAuthentication = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
@@ -38,14 +79,11 @@ extension AuthenticationManager {
         guard let idToken = user.idToken else {
             print("** ERROR: ID token missing **")
             self.profile = nil
-            return
+            self.state = .mustRegister
+            return nil
         }
         let accessToken = user.accessToken
-        let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
+        return GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
                                                        accessToken: accessToken.tokenString)
-        
-        let result = try await Auth.auth().signIn(with: credential)
-        self.profile = Profile(user: result.user)
-        
     }
 }

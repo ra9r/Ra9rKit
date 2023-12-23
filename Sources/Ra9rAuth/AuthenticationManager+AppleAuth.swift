@@ -82,6 +82,7 @@ extension AuthenticationManager {
                         let result = try await Auth.auth().signIn(with: credential)
                         updateDisplayName(for: result.user, with: appleIDCredential)
                         self.profile = Profile(user: result.user)
+                        self.state = .authenticated
                     } catch {
                         print("** Error: \(error)")
                     }
