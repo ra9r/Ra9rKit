@@ -12,9 +12,9 @@ public struct DecimalPicker<T : Numeric & Uncombinable>: View {
     /// A binding to a variable that will hold the result of the picker
     @Binding var value: T
     /// The internat state for the whole number portion of the picker
-    @State private var wholeNumber: Int = 0
+    @State private var wholeNumber: Int?
     /// The internat state for the decimal portion of the picker
-    @State private var decimalNumber: Int = 0
+    @State private var decimalNumber: Int?
     /// The range of whole numbers than can be picked from
     var wholeNumbers: [Int]
     /// The range of decimal values that can be picked from
@@ -27,6 +27,7 @@ public struct DecimalPicker<T : Numeric & Uncombinable>: View {
         let parts = value.wrappedValue.uncombine()
         self.wholeNumber = parts.wholeNumber
         self.decimalNumber = parts.decimalNumber
+        
     }
     
     public var body: some View {
@@ -49,13 +50,12 @@ public struct DecimalPicker<T : Numeric & Uncombinable>: View {
             .pickerStyle(WheelPickerStyle())
             Spacer()
         }.onChange(of: wholeNumber) { oldNumber, newNumber in
-            let newVal = T(newNumber, self.decimalNumber)
+            let newVal = T(newNumber!, self.decimalNumber!)
             value = newVal
         }.onChange(of: decimalNumber) { oldNumber, newNumber in
-            let newVal = T(self.wholeNumber, newNumber)
+            let newVal = T(self.wholeNumber!, newNumber!)
             value = newVal
         }
-        .padding(20)
     }
 }
 
@@ -65,7 +65,7 @@ public struct DecimalPicker<T : Numeric & Uncombinable>: View {
         var body: some View {
             Text("\(weight.formatPrecision(1)) kgs").font(.headline)
             DecimalPicker($weight)
-                .padding(50)
+            Spacer()
         }
     }
     
