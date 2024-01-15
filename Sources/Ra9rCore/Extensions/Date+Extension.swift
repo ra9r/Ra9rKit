@@ -80,4 +80,26 @@ extension Date {
             return dateFormatter.string(from: self)
         }
     }
+    
+    public var weekDates: [Date] {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // Set the week to start on Monday
+        
+        // Find the start of the week for the given date
+        guard let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else {
+            return []
+        }
+        
+        // Create an array to hold dates for the whole week
+        var week: [Date] = []
+        
+        // Populate the array with dates from Monday to Sunday
+        for i in 0..<7 {
+            if let date = calendar.date(byAdding: .day, value: i, to: startOfWeek) {
+                week.append(date)
+            }
+        }
+        
+        return week
+    }
 }
