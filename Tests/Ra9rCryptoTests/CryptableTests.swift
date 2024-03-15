@@ -12,41 +12,87 @@ import CryptoKit
 
 class CryptableTests: XCTestCase {
     
-    func testInitialization() {
+    func testEncryptionDecryptionOfString() throws {
         let key = SymmetricKey(size: .bits256)
-        let cryptable = Cryptable(key: key)
-        XCTAssertNotNil(cryptable)
-    }
-    
-    func testEncryptionDecryption() throws {
-        let key = SymmetricKey(size: .bits256)
-        let cryptable = Cryptable(key: key)
-        let data = "Test Data".data(using: .utf8)!
-        
-        let encryptedData = try cryptable.encrypt(data: data)
+        let value = "Test Data"
+        let encryptedData = try value.encrypt(key: key)
         XCTAssertNotNil(encryptedData)
         
-        let decryptedData = try cryptable.decrypt(sealedBoxData: encryptedData!)
-        XCTAssertEqual(data, decryptedData)
+        let decryptedValue = try encryptedData?.decrypt(as: String.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
     }
     
-//    func testStoreAndRetrieveKeyInKeychain() throws {
-//        let tag = "com.example.yourapp.key"
-//        let key = SymmetricKey(size: .bits256)
-//        
-//        // Convert key to Data for comparison later
-//        let originalKeyData = key.withUnsafeBytes { Data(Array($0)) }
-//        
-//        // Store the key in the keychain
-//        try StoreKeyInKeychain(tag: tag, key: key)
-//        
-//        // Retrieve the key from the keychain
-//        let retrievedKey = try RetrieveKeyFromKeychain(tag: tag)
-//        
-//        // Convert retrieved key to Data for comparison
-//        let retrievedKeyData = retrievedKey.withUnsafeBytes { Data(Array($0)) }
-//        
-//        // Compare the original key and the retrieved key
-//        XCTAssertEqual(originalKeyData, retrievedKeyData)
-//    }
+    func testEncryptionDecryptionOfCharacter() throws {
+        let key = SymmetricKey(size: .bits256)
+        let value = Character("T")
+        let encryptedData = try value.encrypt(key: key)
+        XCTAssertNotNil(encryptedData)
+        
+        let decryptedValue = try encryptedData?.decrypt(as: Character.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
+    }
+    
+    func testEncryptionDecryptionOfInt() throws {
+        let key = SymmetricKey(size: .bits256)
+        let value = 25
+        let encryptedData = try value.encrypt(key: key)
+        XCTAssertNotNil(encryptedData)
+        
+        let decryptedValue = try encryptedData?.decrypt(as: Int.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
+    }
+    
+    func testEncryptionDecryptionOfUInt() throws {
+        let key = SymmetricKey(size: .bits256)
+        let value = UInt(25)
+        let encryptedData = try value.encrypt(key: key)
+        XCTAssertNotNil(encryptedData)
+        
+        let decryptedValue = try encryptedData?.decrypt(as: UInt.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
+    }
+    
+    func testEncryptionDecryptionOfDouble() throws {
+        let key = SymmetricKey(size: .bits256)
+        let value = 26.9
+        let encryptedData = try value.encrypt(key: key)
+        XCTAssertNotNil(encryptedData)
+        
+        let decryptedValue = try encryptedData?.decrypt(as: Double.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
+    }
+    
+    func testEncryptionDecryptionOfFloat() throws {
+        let key = SymmetricKey(size: .bits256)
+        let value = Float(26.9)
+        let encryptedData = try value.encrypt(key: key)
+        XCTAssertNotNil(encryptedData)
+        
+        let decryptedValue = try encryptedData?.decrypt(as: Float.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
+    }
+    
+    func testEncryptionDecryptionOfBool() throws {
+        let key = SymmetricKey(size: .bits256)
+        let value = true
+        let encryptedData = try value.encrypt(key: key)
+        XCTAssertNotNil(encryptedData)
+        
+        let decryptedValue = try encryptedData?.decrypt(as: Bool.self, key: key)
+        XCTAssertNotNil(decryptedValue)
+        
+        XCTAssertEqual(value, decryptedValue)
+    }
 }

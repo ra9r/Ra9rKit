@@ -6,3 +6,8 @@
 //
 
 import Foundation
+import CryptoKit
+
+public protocol Encryptable {
+    func encrypt(key: SymmetricKey) throws -> Data?
+}
