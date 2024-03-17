@@ -8,7 +8,11 @@
 import SwiftUI
 
 public struct RulerPicker: View {
-    var config: Config
+    // Picker Range
+    var range = 0...100
+    // Configuration
+    var config: RulerConfig
+    // Selected value
     @Binding var value: CGFloat
     // View Property
     @State private var isLoaded: Bool = false
@@ -20,23 +24,20 @@ public struct RulerPicker: View {
             
             ScrollView(.horizontal) {
                 HStack(spacing: config.spacing) {
-                    let totalSteps = config.steps * config.count
+                    let count = range.upperBound - range.lowerBound
+                    let totalSteps = config.steps * count
                     
                     ForEach(0...totalSteps, id: \.self) { index in
                         let remainder = index % config.steps
+                        let hashHeight = hashHeight(index: index)
                         
                         Divider()
                             .background(remainder == 0 ? Color.primary : .gray)
-                            .frame(width: 0, height: remainder == 0 ? 20 : 10, alignment: .center)
+                            .frame(width: 0, height: hashHeight, alignment: .center)
                             .frame(maxHeight: 20, alignment: .bottom)
                             .overlay(alignment: .bottom) {
                                 if remainder == 0 && config.showsText {
-                                    Text("\((index / config.steps) * config.multiplier) ")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .textScale(.secondary)
-                                        .fixedSize()
-                                        .offset(y:20)
+                                    labelText(index: index)
                                 }
                             }
                     }
@@ -54,6 +55,7 @@ public struct RulerPicker: View {
                     value = (CGFloat(newValue) / CGFloat(config.steps)) * CGFloat(config.multiplier)
                 }
             }))
+            // Center Mark
             .overlay(alignment: .center) {
                 Rectangle()
                     .frame(width: 1, height: 40)
@@ -64,30 +66,67 @@ public struct RulerPicker: View {
                 if !isLoaded { isLoaded = true}
             }
         }
+
     }
     
-    struct Config: Equatable {
-        var count: Int
-        var steps: Int = 10
-        var spacing: CGFloat = 5
-        var multiplier: Int = 10
-        var showsText: Bool = true
+    func labelText(index: Int) -> some View {
+        Text("\((index / config.steps) * config.multiplier) ")
+            .font(.caption)
+            .fontWeight(.semibold)
+            .textScale(.secondary)
+            .fixedSize()
+            .offset(y:20)
     }
+    
+    func hashHeight(index: Int) -> CGFloat {
+        for (divisor, specialValue) in config.hashHeights {
+            if index % divisor == 0 {
+                return specialValue
+            }
+        }
+        return config.hashHeight
+    }
+}
+
+public struct RulerConfig: Equatable, Hashable {
+    public var steps: Int
+    public var spacing: CGFloat
+    public var multiplier: Int
+    public var showsText: Bool = true
+    public var hashHeight: CGFloat = 10
+    public var hashHeights: [Int: CGFloat]
+    
+    public static var basic = RulerConfig(steps: 10, spacing: 10, multiplier: 1, showsText: true, hashHeights: [
+        10: 20
+    ])
+    
+    public static var metric = RulerConfig(steps: 10, spacing: 10, multiplier: 1, showsText: true, hashHeights: [
+        5: 15,
+        10: 20
+    ])
+    
+    public static var imperial16 = RulerConfig(steps: 16, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
+        2: 10,
+        4: 15,
+        8: 20
+    ])
+    
+    public static var imperial8 = RulerConfig(steps: 8, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
+        2: 10,
+        4: 20
+    ])
 }
 
 // MARK: - Preview Wrapper
 
 private struct RulerPickerPreview: View {
-    @State private var config: RulerPicker.Config = .init(count: 30, multiplier: 1)
+    @State private var config: RulerConfig = .imperial8
     @State private var value: CGFloat = 10
-    let countOptions = [10, 50, 100]
-    let stepOptions = [5, 10]
-    let multiplierOptions = [1, 10]
     
     var body: some View {
         NavigationStack {
             VStack {
-                SpintText(uom: "kg", value: $value)
+                SpinningNumber(value: $value, uom: UnitLength.inches)
                     .padding(.bottom, 3)
                 
                 RulerPicker(config: config, value: $value)
@@ -95,33 +134,15 @@ private struct RulerPickerPreview: View {
                     .padding()
                 
                 VStack(alignment: .leading) {
-                    Text("Count")
-                    Picker("Options", selection: $config.count) {
-                        ForEach(countOptions, id: \.self) { option in
-                            Text("\(option)").tag(option)
-                        }
+                    Picker("Options", selection: $config) {
+                        Text("Basic").tag(RulerConfig.basic)
+                        Text("Metric").tag(RulerConfig.metric)
+                        Text("Imperial 8").tag(RulerConfig.imperial8)
+                        Text("Imperial 16").tag(RulerConfig.imperial16)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     
-                    Text("Multiplier")
-                    Picker("Multiplier", selection: $config.multiplier) {
-                        ForEach(multiplierOptions, id: \.self) { option in
-                            Text("\(option)").tag(option)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    
-                    Text("Steps")
-                    Picker("Steps", selection: $config.steps) {
-                        ForEach(stepOptions, id: \.self) { option in
-                            Text("\(option)").tag(option)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    
-                    Text("Spacing")
-                    Slider(value: $config.spacing, in: 5...20, step: 1)
-                } .padding()
+                }.padding()
             }
             .navigationTitle("Wheel Picker")
         }
