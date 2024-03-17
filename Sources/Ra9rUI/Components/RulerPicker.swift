@@ -108,12 +108,14 @@ public struct RulerConfig: Equatable, Hashable {
     public static var imperial16 = RulerConfig(steps: 16, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
         2: 10,
         4: 15,
-        8: 20
+        8: 20,
+        16: 25
     ])
     
     public static var imperial8 = RulerConfig(steps: 8, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
         2: 10,
-        4: 20
+        4: 15,
+        8: 20
     ])
 }
 
@@ -144,7 +146,7 @@ private struct RulerPickerPreview: View {
                     
                 }.padding()
             }
-            .navigationTitle("Wheel Picker")
+            .navigationTitle("Ruler Picker")
         }
     }
 }
