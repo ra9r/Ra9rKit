@@ -67,6 +67,11 @@ class DoubleExtensionTests: XCTestCase {
         XCTAssertEqual(value.formatInches(), "6 ¼")
     }
     
+    func testFormatInchesWith1Sixteenth() {
+        var value = 1.0 + (1.0/16.0)
+        XCTAssertEqual(value.formatInches(), "1 ¹⁄₁₆")
+    }
+    
     func testFormatInchesWith15Sixteenth() {
         var value = 6.0 + (15/16)
         XCTAssertEqual(value.formatInches(), "7")
