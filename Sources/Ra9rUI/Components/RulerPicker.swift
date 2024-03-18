@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  RulerPicker.swift
+//
 //
 //  Created by Rodney Aiglstorfer on 3/15/24.
 //
@@ -32,7 +32,7 @@ public struct RulerPicker: View {
                         let hashHeight = hashHeight(index: index)
                         
                         Divider()
-                            .background(remainder == 0 ? Color.primary : .gray)
+                            .background(hashColor(index: index))
                             .frame(width: 0, height: hashHeight, alignment: .center)
                             .frame(maxHeight: 20, alignment: .bottom)
                             .overlay(alignment: .bottom) {
@@ -69,6 +69,13 @@ public struct RulerPicker: View {
 
     }
     
+    func hashColor(index: Int) -> Color {
+        if hashHeight(index: index) == config.hashHeight {
+            return .gray
+        }
+        return .black
+    }
+    
     func labelText(index: Int) -> some View {
         Text("\((index / config.steps) * config.multiplier) ")
             .font(.caption)
@@ -79,9 +86,10 @@ public struct RulerPicker: View {
     }
     
     func hashHeight(index: Int) -> CGFloat {
-        for (divisor, specialValue) in config.hashHeights {
+        
+        for divisor in config.hashHeights.keys.sorted().reversed() {
             if index % divisor == 0 {
-                return specialValue
+                return config.hashHeights[divisor]!
             }
         }
         return config.hashHeight
@@ -105,17 +113,16 @@ public struct RulerConfig: Equatable, Hashable {
         10: 20
     ])
     
-    public static var imperial16 = RulerConfig(steps: 16, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
-        2: 10,
-        4: 15,
-        8: 20,
-        16: 25
-    ])
-    
     public static var imperial8 = RulerConfig(steps: 8, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
         2: 10,
         4: 15,
         8: 20
+    ])
+    
+    public static var imperial16 = RulerConfig(steps: 16, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
+        2: 10,
+        4: 20,
+        16: 30
     ])
 }
 
@@ -128,8 +135,13 @@ private struct RulerPickerPreview: View {
     var body: some View {
         NavigationStack {
             VStack {
-                SpinningNumber(value: $value, uom: UnitLength.inches)
-                    .padding(.bottom, 3)
+                if config == .imperial8 || config == .imperial16 {
+                    SpinningNumber(value: $value, uom: UnitLength.inches)
+                        .padding(.bottom, 3)
+                } else {
+                    SpinningNumber(value: $value, uom: UnitLength.meters)
+                        .padding(.bottom, 3)
+                }
                 
                 RulerPicker(config: config, value: $value)
                     .frame(height: 60)
