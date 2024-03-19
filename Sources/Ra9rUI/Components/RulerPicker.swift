@@ -86,7 +86,9 @@ public struct RulerPicker: View {
     }
     
     func hashHeight(index: Int) -> CGFloat {
-        
+        if config.hashHeights.isEmpty {
+            return config.hashHeight
+        }
         for divisor in config.hashHeights.keys.sorted().reversed() {
             if index % divisor == 0 {
                 return config.hashHeights[divisor]!
@@ -102,7 +104,7 @@ public struct RulerConfig: Equatable, Hashable {
     public var multiplier: Int
     public var showsText: Bool = true
     public var hashHeight: CGFloat = 10
-    public var hashHeights: [Int: CGFloat]
+    public var hashHeights: [Int: CGFloat] = [:]
     
     public static var basic = RulerConfig(steps: 10, spacing: 10, multiplier: 1, showsText: true, hashHeights: [
         10: 20
@@ -124,6 +126,10 @@ public struct RulerConfig: Equatable, Hashable {
         4: 20,
         16: 30
     ])
+    
+    public static var thirds = RulerConfig(steps: 3, spacing: 10, multiplier: 1, showsText: true, hashHeight: 5, hashHeights: [
+        3: 20
+    ])
 }
 
 // MARK: - Preview Wrapper
@@ -135,7 +141,7 @@ private struct RulerPickerPreview: View {
     var body: some View {
         NavigationStack {
             VStack {
-                if config == .imperial8 || config == .imperial16 {
+                if config == .imperial8 || config == .imperial16 || config == .thirds {
                     SpinningNumber(value: $value, uom: UnitLength.inches)
                         .padding(.bottom, 3)
                 } else {
@@ -149,6 +155,7 @@ private struct RulerPickerPreview: View {
                 
                 VStack(alignment: .leading) {
                     Picker("Options", selection: $config) {
+                        Text("Thirds").tag(RulerConfig.thirds)
                         Text("Basic").tag(RulerConfig.basic)
                         Text("Metric").tag(RulerConfig.metric)
                         Text("Imperial 8").tag(RulerConfig.imperial8)

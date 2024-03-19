@@ -54,17 +54,22 @@ class DoubleExtensionTests: XCTestCase {
     // MARK: - formatInches() Tests
     func testFormatInchesWholeNumber() {
         var value = 6.0
-        XCTAssertEqual(value.formatInches(), "6")
+        XCTAssertEqual(value.formatInches(), "6.0")
     }
     
     func testFormatInchesWithOneSixteenth() {
         var value = 6.0 + (1/16)
-        XCTAssertEqual(value.formatInches(), "6 ⅛")
+        XCTAssertEqual(value.formatInches(), "6 ¹⁄₁₆")
     }
     
     func testFormatInchesWith3Sixteenth() {
         var value = 6.0 + (3/16)
-        XCTAssertEqual(value.formatInches(), "6 ¼")
+        XCTAssertEqual(value.formatInches(), "6 ³⁄₁₆")
+    }
+    
+    func testFormatInchesWith1Third() {
+        var value = 6.0 + (1/3)
+        XCTAssertEqual(value.formatInches(), "6 ⅓")
     }
     
     func testFormatInchesWith1Sixteenth() {
@@ -74,7 +79,7 @@ class DoubleExtensionTests: XCTestCase {
     
     func testFormatInchesWith15Sixteenth() {
         var value = 6.0 + (15/16)
-        XCTAssertEqual(value.formatInches(), "7")
+        XCTAssertEqual(value.formatInches(), "6 ¹⁵⁄₁₆")
     }
     
     func testFormatInchesHalfInch() {
@@ -89,7 +94,7 @@ class DoubleExtensionTests: XCTestCase {
     
     func testFormatInchesWithApproximations() {
         var value = 4.13  // Close to 1/8
-        XCTAssertEqual(value.formatInches(), "4 ⅛")
+        XCTAssertEqual(value.formatInches(), "4.1")
     }
 }
 

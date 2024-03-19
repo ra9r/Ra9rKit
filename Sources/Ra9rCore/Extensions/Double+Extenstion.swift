@@ -39,7 +39,7 @@ extension Double : Uncombinable {
         // Get the whole value
         let wholeInches = Int(floor(roundedSelf))
         // Get the remainder (decimal part)
-        let remainingPart = roundedSelf - Double(wholeInches)
+        let remainingPart = self - Double(wholeInches)
         
         // Fraction approximations (same as before)
         let tolerance = 0.0001
@@ -49,18 +49,18 @@ extension Double : Uncombinable {
             3.0/16.0: "³⁄₁₆",   // 0.1875
             1.0/4.0: "¼",       // 0.2500
             5.0/16.0: "⁵⁄₁₆",   // 0.3125
+            0.3333: "⅓",        // 0.3333 ... 0.3334
             3.0/8.0: "⅜",       // 0.3750
             7.0/16.0: "⁷⁄₁₆",   // 0.4375
             1.0/2.0: "½",       // 0.5000
             9.0/16.0: "⁹⁄₁₆",   // 0.5625
             5.0/8.0: "⅝",       // 0.2777 ... 0.2778
+            0.6666: "⅔",        // 0.6666 ... 0.6667
             11.0/16.0: "¹¹⁄₁₆", // 0.6875
             3.0/4.0: "¾",       // 0.7500
             13.0/16.0: "¹³⁄₁₆", // 0.8125
             7.0/8.0: "⅞",       // 0.8750
-            15.0/16.0: "¹⁵⁄₁₆", // 0.9375
-            1.0/3.0: "⅓",       // 0.3333 ... 0.3334
-            2.0/3.0: "⅔"        // 0.6666 ... 0.6667
+            15.0/16.0: "¹⁵⁄₁₆" // 0.9375
         ]
         
         var fraction = ""
@@ -73,7 +73,7 @@ extension Double : Uncombinable {
         }
         
         if fraction.isEmpty {
-            return "\(wholeInches)"
+            return "\(self.formatPrecision(1))"
         }
         
         return "\(wholeInches) \(fraction)"
