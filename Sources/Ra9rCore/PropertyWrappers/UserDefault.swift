@@ -5,10 +5,10 @@
 //  Created by Rodney Aiglstorfer on 2/9/24.
 //
 
-import Foundation
+import SwiftUI
 
 @propertyWrapper
-public struct UserDefault<Value: Codable> {
+public struct UserDefault<Value: Codable>: DynamicProperty {
     public let key: String
     public let defaultValue: Value
     
@@ -21,8 +21,15 @@ public struct UserDefault<Value: Codable> {
         get {
             return UserDefaults.standard.object(forKey: key) as? Value ?? defaultValue
         }
-        set {
+        nonmutating set {
             UserDefaults.standard.set(newValue, forKey: key)
         }
+    }
+    
+    public var projectedValue: Binding<Value> {
+        Binding(
+            get: { wrappedValue },
+            set: { wrappedValue = $0 }
+        )
     }
 }

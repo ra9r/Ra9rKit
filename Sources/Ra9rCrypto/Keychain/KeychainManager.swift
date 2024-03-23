@@ -10,7 +10,11 @@ import CryptoKit
 
 public class KeychainManager : ObservableObject {
     
-    public init() {}
+    private var account: String
+    
+    public init(account: String) {
+        self.account = account
+    }
     
     // MARK: - Key Support
     
@@ -76,15 +80,18 @@ public class KeychainManager : ObservableObject {
         let query = [
             kSecClass as String: kSecClassGenericPassword,
 //            kSecAttrApplicationTag as String: tag,
-            kSecAttrAccount as String: "user@example.com",
+            kSecAttrAccount as String: account,
             kSecAttrService as String: tag,
             kSecValueData as String: data
         ] as CFDictionary
         
         let status = SecItemAdd(query as CFDictionary, nil)
         if status == errSecDuplicateItem { // Update existing item
+            print("Duplicate!")
             let newQuery = [
-                kSecAttrApplicationTag: tag
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: account,
+                kSecAttrService as String: tag,
             ] as CFDictionary
             
             let attributesToUpdate = [kSecValueData: data] as CFDictionary
@@ -99,7 +106,7 @@ public class KeychainManager : ObservableObject {
         let query = [
             kSecClass: kSecClassGenericPassword,
 //            kSecAttrApplicationTag: tag,
-            kSecAttrAccount as String: "user@example.com",
+            kSecAttrAccount as String: account,
             kSecAttrService as String: tag,
             kSecReturnData: true
         ] as CFDictionary

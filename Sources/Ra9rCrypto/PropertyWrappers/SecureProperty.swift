@@ -22,7 +22,7 @@ public struct SecureProperty<T: Codable> : DynamicProperty {
         nonmutating set {
             do {
                 try keychain.save(tag, value: newValue)
-                value = newValue // Update the published value
+                value = newValue
             } catch {
                 print("SecureProperty(\(tag)): \(error)")
             }
@@ -37,10 +37,16 @@ public struct SecureProperty<T: Codable> : DynamicProperty {
     }
     
     public func update() {
-        let newValue = try? keychain.read(tag) as T?
-        DispatchQueue.main.async {
-            self.value = newValue
+        
+        if value == nil {
+            print("!! Initialize !!")
+            let newValue = try? keychain.read(tag) as T?
+            DispatchQueue.main.async {
+                print("NewValue: \(newValue)")
+                self.value = newValue
+            }
         }
+        
     }
 }
 
