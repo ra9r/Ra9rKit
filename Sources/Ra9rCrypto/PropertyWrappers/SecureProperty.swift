@@ -42,7 +42,6 @@ public struct SecureProperty<T: Codable> : DynamicProperty {
             print("!! Initialize !!")
             let newValue = try? keychain.read(tag) as T?
             DispatchQueue.main.async {
-                print("NewValue: \(newValue)")
                 self.value = newValue
             }
         }

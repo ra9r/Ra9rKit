@@ -12,16 +12,13 @@ enum KeychainError : Error, CustomStringConvertible {
     
     case statusError(OSStatus)
     case typeConversionError
-    case invalidKeyType
     
     var description: String {
         switch self {
             case .statusError(let status):
                 return message(for: status)
             case .typeConversionError:
-                return "Unabled to convert to JSON"
-            case .invalidKeyType:
-                return "Key was not of type Data"
+                return "Unabled to convert into Data"
         }
     }
     

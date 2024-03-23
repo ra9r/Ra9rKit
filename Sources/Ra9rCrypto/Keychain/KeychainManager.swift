@@ -52,7 +52,7 @@ public class KeychainManager : ObservableObject {
         }
         
         guard let keyData = item as? Data else {
-            throw KeychainError.invalidKeyType
+            throw KeychainError.typeConversionError
         }
         
         return SymmetricKey(data: keyData)
