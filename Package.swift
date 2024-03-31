@@ -18,6 +18,9 @@ let package = Package(
             name: "Ra9rCrypto",
             targets: ["Ra9rCrypto"]),
         .library(
+            name: "Ra9rNotification",
+            targets: ["Ra9rNotification"]),
+        .library(
             name: "Ra9rPDF",
             targets: ["Ra9rPDF"])
     ],
@@ -28,6 +31,8 @@ let package = Package(
             name: "Ra9rCore"),
         .target(
             name: "Ra9rCrypto"),
+        .target(
+            name: "Ra9rNotification"),
         .target(
             name: "Ra9rUI",
             dependencies: ["Ra9rCore"]),
