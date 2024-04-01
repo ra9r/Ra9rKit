@@ -10,5 +10,6 @@ import UserNotifications
 
 public struct LocalNotificationAction : Identifiable {
     public var id: String
+    public var actionIdentifier: String
     public var content: UNNotificationContent
 }

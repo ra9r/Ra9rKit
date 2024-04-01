@@ -152,7 +152,10 @@ extension LocalNotificationServices : UNUserNotificationCenterDelegate {
     public func userNotificationCenter(_ center: UNUserNotificationCenter, 
                                        didReceive response: UNNotificationResponse) async {
         
-        await handleAction(actionIdentifier: response.actionIdentifier, request: response.notification.request)
+        let request = response.notification.request
+        self.lastNotification = LocalNotificationAction(id: request.identifier,
+                                                        actionIdentifier: response.actionIdentifier,
+                                                        content: request.content)
     }
 }
 
@@ -170,18 +173,6 @@ extension LocalNotificationServices {
     }
     
     
-    public func handleAction(actionIdentifier: String, request: UNNotificationRequest) async {
-        switch actionIdentifier {
-            case "snooze30":
-                await snooze(request.content, interval: 60*30)
-//            case UNNotificationDefaultActionIdentifier:
-//                fallthrough
-//            case UNNotificationDismissActionIdentifier:
-//                fallthrough
-            default:
-                self.lastNotification = LocalNotificationAction(id: request.identifier,
-                                                                content: request.content)
-        }
-    }
+    
 }
 
