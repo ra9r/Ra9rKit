@@ -10,19 +10,20 @@ import UserNotifications
 
 typealias LocalNotificationActionHandler = (String, UNNotificationContent) -> Void
 
+
 @MainActor
-@Observable
-public class LocalNotificationServices : NSObject {
-    public var pendingRequests: [UNNotificationRequest] = []
+public class LocalNotificationServices : NSObject, ObservableObject {
+    private let notificationCenter = UNUserNotificationCenter.current()
+
+    @Published public var pendingRequests: [UNNotificationRequest] = []
     
     /// State property is set to `true` if user has granted permissions, `false` otherwise.
     /// Update this value by calling the `getCurrentSettings()` functions.
-    public var isGranted = false
+    @Published public var isGranted = false
     
-    private let notificationCenter = UNUserNotificationCenter.current()
     
     /// This property is set each time a local notification is clicked on
-    public var lastNotification: LocalNotificationAction?
+    @Published public var lastNotification: LocalNotificationAction?
     
     public override init() {
         super.init()
