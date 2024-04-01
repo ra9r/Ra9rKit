@@ -25,6 +25,7 @@ public class LocalNotificationServices : NSObject {
     
     public override init() {
         super.init()
+        registerActions()
         notificationCenter.delegate = self
     }
     
@@ -151,8 +152,36 @@ extension LocalNotificationServices : UNUserNotificationCenterDelegate {
     public func userNotificationCenter(_ center: UNUserNotificationCenter, 
                                        didReceive response: UNNotificationResponse) async {
         
-        self.lastNotification = LocalNotificationAction(id: response.notification.request.identifier,
-                                                        content: response.notification.request.content)
+        await handleAction(actionIdentifier: response.actionIdentifier, request: response.notification.request)
+    }
+}
+
+
+extension LocalNotificationServices {
+    /// Default action registration setups a category called `snooze` which will add a `snooze30` and a `dismiss` action.
+    /// To add custom actions and notification categories, override this method.
+    public func registerActions() {
+        let snooze30Action = UNNotificationAction(identifier: "snooze30", title: "Snooze 30 mins")
+        let dismissAction = UNNotificationAction(identifier: UNNotificationDismissActionIdentifier, title: "Dismiss")
+        let snoozeCategory = UNNotificationCategory(identifier: "snooze",
+                                                    actions: [snooze30Action, dismissAction],
+                                                    intentIdentifiers: [])
+        notificationCenter.setNotificationCategories([snoozeCategory])
+    }
+    
+    
+    public func handleAction(actionIdentifier: String, request: UNNotificationRequest) async {
+        switch actionIdentifier {
+            case "snooze30":
+                await snooze(request.content, interval: 60*30)
+//            case UNNotificationDefaultActionIdentifier:
+//                fallthrough
+//            case UNNotificationDismissActionIdentifier:
+//                fallthrough
+            default:
+                self.lastNotification = LocalNotificationAction(id: request.identifier,
+                                                                content: request.content)
+        }
     }
 }
 
