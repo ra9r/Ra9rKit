@@ -10,6 +10,7 @@ import UserNotifications
 
 typealias LocalNotificationActionHandler = (String, UNNotificationContent) -> Void
 
+@MainActor
 @Observable
 public class LocalNotificationServices : NSObject {
     public var pendingRequests: [UNNotificationRequest] = []
