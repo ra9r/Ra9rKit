@@ -20,12 +20,12 @@ public class LocalNotificationCategory {
     public var identifier: String
     public var actions: [LocalNotificationAction]
     
-    init(_ identifier: String) {
+    public init(_ identifier: String) {
         self.identifier = identifier
         self.actions = []
     }
     
-    func addAction(_ identifier: String,
+    public func addAction(_ identifier: String,
                    label: LocalizedStringKey,
                    option: LocalNotificationActionOption?) -> LocalNotificationCategory {
         let action = LocalNotificationAction(identifier,
@@ -34,7 +34,7 @@ public class LocalNotificationCategory {
         return self.addAction(action)
     }
     
-    func addAction(_ identifier: String,
+    public func addAction(_ identifier: String,
                    label: LocalizedStringKey,
                    systemImage: String,
                    option: LocalNotificationActionOption?) -> LocalNotificationCategory {
@@ -45,7 +45,7 @@ public class LocalNotificationCategory {
         return self.addAction(action)
     }
     
-    func addAction(_ action: LocalNotificationAction) -> LocalNotificationCategory  {
+    public func addAction(_ action: LocalNotificationAction) -> LocalNotificationCategory  {
         actions.append(action)
         
         return self
