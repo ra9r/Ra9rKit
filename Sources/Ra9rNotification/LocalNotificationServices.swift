@@ -10,7 +10,23 @@ import UserNotifications
 
 typealias LocalNotificationActionHandler = (String, UNNotificationContent) -> Void
 
-
+/// Service provider for Local Notifications.
+///
+/// # Example Setup
+/// ```swift
+/// @State var lnServices = LocalNotificationServices(category: [
+///         LocalNotificationCategory("snooze")
+///             .addAction("snooze30", label: "Snooze 30 secons", systemImage: "powersleep")
+///             .addAction("dismiss", label: "Dismiss", option: .destructive),
+///         LocalNotificationCategory("severity")
+///             .addAction("mild", label: "Mild", option: .authenticationRequired)
+///             .addAction("moderate", label: "Moderate", option: .authenticationRequired)
+///             .addAction("severe", label: "Severe", option: .authenticationRequired)
+///             .addAction("notPresent", label: "Not Present", option: .destructive)
+/// ])
+/// ```
+///
+/// > Don't forget to add ``LocalNotificationServices`` to your environment using `.environmentObject()`
 @MainActor
 public class LocalNotificationServices : NSObject, ObservableObject {
     private let notificationCenter = UNUserNotificationCenter.current()
@@ -23,12 +39,20 @@ public class LocalNotificationServices : NSObject, ObservableObject {
     
     
     /// This property is set each time a local notification is clicked on
-    @Published public var lastNotification: LocalNotificationAction?
+    @Published public var notificationEvent: LocalNotificationActionEvent?
     
     public override init() {
         super.init()
-        registerActions()
         notificationCenter.delegate = self
+    }
+    
+    public convenience init(categories: [LocalNotificationCategory]) {
+        self.init()
+        var nativeCategories: Set<UNNotificationCategory> = []
+        for category in categories {
+            nativeCategories.insert(category.convert())
+        }
+        notificationCenter.setNotificationCategories(nativeCategories)
     }
     
     /// Ask for user's permission to issue local notifications
@@ -155,26 +179,10 @@ extension LocalNotificationServices : UNUserNotificationCenterDelegate {
                                        didReceive response: UNNotificationResponse) async {
         
         let request = response.notification.request
-        self.lastNotification = LocalNotificationAction(id: request.identifier,
+        self.notificationEvent = LocalNotificationActionEvent(id: request.identifier,
                                                         actionIdentifier: response.actionIdentifier,
                                                         content: request.content)
     }
 }
 
-
-extension LocalNotificationServices {
-    /// Default action registration setups a category called `snooze` which will add a `snooze30` and a `dismiss` action.
-    /// To add custom actions and notification categories, override this method.
-    public func registerActions() {
-        let snooze30Action = UNNotificationAction(identifier: "snooze30", title: "Snooze 30 mins")
-        let dismissAction = UNNotificationAction(identifier: UNNotificationDismissActionIdentifier, title: "Dismiss")
-        let snoozeCategory = UNNotificationCategory(identifier: "snooze",
-                                                    actions: [snooze30Action, dismissAction],
-                                                    intentIdentifiers: [])
-        notificationCenter.setNotificationCategories([snoozeCategory])
-    }
-    
-    
-    
-}
 
