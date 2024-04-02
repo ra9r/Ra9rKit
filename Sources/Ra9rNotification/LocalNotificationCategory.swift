@@ -26,7 +26,7 @@ public class LocalNotificationCategory {
     }
     
     public func addAction(_ identifier: String,
-                   label: LocalizedStringKey,
+                   label: String,
                    option: LocalNotificationActionOption?) -> LocalNotificationCategory {
         let action = LocalNotificationAction(identifier,
                                              label: label,
@@ -35,7 +35,7 @@ public class LocalNotificationCategory {
     }
     
     public func addAction(_ identifier: String,
-                   label: LocalizedStringKey,
+                   label: String,
                    systemImage: String,
                    option: LocalNotificationActionOption?) -> LocalNotificationCategory {
         let action = LocalNotificationAction(identifier,

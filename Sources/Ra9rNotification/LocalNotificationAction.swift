@@ -4,14 +4,13 @@
 //
 //  Created by Rodney Aiglstorfer on 4/2/24.
 //
-
 import SwiftUI
 
 public struct LocalNotificationAction {
     /// The value that will be used as the `actionIdentifier` for the ``UNNotificationAction```
     var identifier: String
     /// The localized string key value that will be used as the `title` for the ``UNNotificationAction``
-    var label: LocalizedStringKey
+    var label: String
     
     var option: LocalNotificationActionOption?
     
@@ -30,7 +29,7 @@ public struct LocalNotificationAction {
     ///   - destructive: If `true` the action performs a destructive task.
     ///   - foreground: If `true` the action causes the app to launch in the foreground.
     public init(_ identifier: String,
-                label: LocalizedStringKey,
+                label: String,
                 option: LocalNotificationActionOption? = nil) {
         self.identifier = identifier
         self.label = label
@@ -48,7 +47,7 @@ public struct LocalNotificationAction {
     ///   - destructive: If `true` the action performs a destructive task.
     ///   - foreground: If `true` the action causes the app to launch in the foreground.
     public init(_ identifier: String,
-                label: LocalizedStringKey,
+                label: String,
                 systemImage: String,
                 option: LocalNotificationActionOption? = nil) {
         self.init(identifier, label: label, option: option)
@@ -64,7 +63,7 @@ public struct LocalNotificationAction {
     ///   - destructive: If `true` the action performs a destructive task.
     ///   - foreground: If `true` the action causes the app to launch in the foreground.
     public init(_ identifier: String,
-                label: LocalizedStringKey,
+                label: String,
                 templateImage: String,
                 option: LocalNotificationActionOption? = nil) {
         self.init(identifier, label: label, option: option)
@@ -72,18 +71,17 @@ public struct LocalNotificationAction {
     }
     
     func convert() -> UNNotificationAction {
-        let title = "\(label)"
         if let systemImage {
             if let options {
                 return UNNotificationAction(
                     identifier: identifier,
-                    title: title,
+                    title: label,
                     options: options,
                     icon: UNNotificationActionIcon(systemImageName: systemImage))
             }
             return UNNotificationAction(
                 identifier: identifier,
-                title: "\(label)",
+                title: label,
                 icon: UNNotificationActionIcon(systemImageName: systemImage)
             )
            
@@ -91,24 +89,24 @@ public struct LocalNotificationAction {
             if let options {
                 return UNNotificationAction(
                     identifier: identifier,
-                    title: title,
+                    title: label,
                     options: options,
                     icon: UNNotificationActionIcon(templateImageName: templateImage))
             }
             return UNNotificationAction(
                 identifier: identifier,
-                title: "\(label)",
+                title: label,
                 icon: UNNotificationActionIcon(templateImageName: templateImage))
         } else {
             if let options {
                 return UNNotificationAction(
                     identifier: identifier,
-                    title: title,
+                    title: label,
                     options: options)
             }
             return UNNotificationAction(
                 identifier: identifier,
-                title: title)
+                title: label)
         }
     }
     
