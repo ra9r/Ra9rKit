@@ -1,0 +1,5 @@
+version: 1
+builder:
+  configs:
+    - documentation_targets: [Ra9rCore, Ra9rCrypto, Ra9rNotification, Ra9rPDF, Ra9rUI]
+    platform: ios
