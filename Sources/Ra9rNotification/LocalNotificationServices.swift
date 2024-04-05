@@ -88,6 +88,10 @@ public class LocalNotificationServices : NSObject, ObservableObject {
         content.body = localNotification.body
         content.sound = sound ?? .default
         
+        if let badge = localNotification.badge {
+            content.badge = NSNumber(integerLiteral: badge)
+        }
+        
         if let subtitle = localNotification.subtitle {
             content.subtitle = subtitle
         }

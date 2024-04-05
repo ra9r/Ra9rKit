@@ -32,6 +32,8 @@ public struct LocalNotification {
     public var userInfo: [AnyHashable : Any]?
     /// The notification category (used when actions are associated with the notification)
     public var categoryIdentifier: String?
+    /// (Optional) The badge count to update with the notification
+    public var badge: Int?
     
     public enum NotificationType {
         case time, calendar
