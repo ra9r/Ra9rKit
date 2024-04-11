@@ -12,14 +12,17 @@ public struct CapsuleGuage: View {
     var rangeMin = 0.0
     var rangeMax = 23.0
     var marks: [CapsuleMark] = []
+    var background: Color
     
     public init(height: CGFloat = 15.0,
          rangeMin: CGFloat = 0.0,
          rangeMax: CGFloat = 0.1,
+                background: Color? = nil,
          marks: [CapsuleMark]) {
         self.height = height
         self.rangeMax = rangeMax
         self.rangeMin = rangeMin
+        self.background = background ?? Color.gray.opacity(0.5)
         self.marks = marks
     }
     
@@ -29,7 +32,7 @@ public struct CapsuleGuage: View {
                 ZStack(alignment: .leading) {
                     // Background
                     Capsule()
-                        .fill(Color.gray.opacity(0.5))
+                        .fill(background)
                         .frame(height: height)
                     ForEach(marks) { mark in
                         capsuleMark(geo.size, innerMarks: mark.innerMarks)
@@ -37,9 +40,7 @@ public struct CapsuleGuage: View {
                 }
                 .frame(width: geo.size.width)
             }
-            Spacer()
         }
-        .padding()
     }
     
     func translate(_ value: CGFloat) -> CGFloat {
