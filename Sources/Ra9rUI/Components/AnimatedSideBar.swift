@@ -14,15 +14,36 @@ public struct AnimatedSideBar<Content: View, MenuView: View, Background: View>: 
     public var sideMenuWidth: CGFloat = 200
     public var cornerRadius: CGFloat = 25
     @Binding public  var showMenu: Bool
-    @ViewBuilder public  var content: (UIEdgeInsets) -> Content
-    @ViewBuilder public  var menuView: MenuView
-    @ViewBuilder public  var background: Background
+    public var content: Content
+    public var menuView: MenuView
+    public var background: Background
     /// View Properties
     @GestureState private var isDragging: Bool = false
     @State private var offsetX: CGFloat = 0
     @State private var lastOffsetX: CGFloat = 0
     /// Used to Dim content view when side bar is being dragged
     @State private var progress: CGFloat = 0
+    
+    public init(
+        rotatesWhenExpands: Bool = true,
+        disablesInteractions: Bool = true,
+        sideMenuWidth: CGFloat = 200,
+        cornerRadius: CGFloat = 25,
+        showMenu: Binding<Bool>,
+        @ViewBuilder content: () -> Content,
+        @ViewBuilder menuView: () -> MenuView,
+        @ViewBuilder background: () -> Background
+    ) {
+        self.rotatesWhenExpands = rotatesWhenExpands
+        self.disablesInteractions = disablesInteractions
+        self.sideMenuWidth = sideMenuWidth
+        self.cornerRadius = cornerRadius
+        self._showMenu = showMenu
+        self.content = content()
+        self.menuView = menuView()
+        self.background = background()
+    }
+
     public var body: some View {
         GeometryReader {
             let size = $0.size
@@ -37,7 +58,7 @@ public struct AnimatedSideBar<Content: View, MenuView: View, Background: View>: 
                 .contentShape(.rect)
                 
                 GeometryReader { _ in
-                    content(safeArea)
+                    content
                 }
                 .frame(width: size.width)
                 .overlay {
