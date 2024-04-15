@@ -102,8 +102,8 @@ public struct AnimatedSideBar<Content: View, MenuView: View, Background: View>: 
         VStack(alignment: .leading, spacing: 12) {
             menuView
         }
-        .padding(.horizontal, 15)
-        .padding(.vertical, 20)
+//        .padding(.horizontal, 15)
+//        .padding(.vertical, 20)
         .padding(.top, safeArea.top)
         .padding(.bottom, safeArea.bottom)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
