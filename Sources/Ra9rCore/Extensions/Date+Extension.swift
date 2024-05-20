@@ -8,11 +8,13 @@
 import Foundation
 
 extension Date {
-    var startOfDay: Date {
+    /// Returns the start of day e.g. 00:00:00
+    public var startOfDay: Date {
         return Calendar.current.startOfDay(for: self)
     }
     
-    var endOfDay: Date? {
+    /// Returns the end of day e.g. 23:59:59
+    public var endOfDay: Date? {
         let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)
         return Calendar.current.date(byAdding: .second, value: -1, to: startOfNextDay ?? self)
     }
