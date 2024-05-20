@@ -8,6 +8,15 @@
 import Foundation
 
 extension Date {
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+    
+    var endOfDay: Date? {
+        let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)
+        return Calendar.current.date(byAdding: .second, value: -1, to: startOfNextDay ?? self)
+    }
+    
     /// Formats the date into a string representation based on the specified format pattern.
     ///
     /// - Parameter pattern: A string representing the date format pattern (e.g., "yyyy-MM-dd").
