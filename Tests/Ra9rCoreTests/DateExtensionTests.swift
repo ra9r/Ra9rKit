@@ -22,6 +22,33 @@ class DateExtensionTests: XCTestCase {
         super.tearDown()
     }
     
+    func testStartOfDay() {
+        // Given
+        let calendar = Calendar.current
+        let date = calendar.date(from: DateComponents(year: 1974, month: 10, day: 4, hour: 13, minute: 30, second: 0))!
+        let expectedStartOfDay = calendar.date(from: DateComponents(year: 1974, month: 10, day: 4, hour: 0, minute: 0, second: 0))!
+        
+        // When
+        let startOfDay = date.startOfDay
+        
+        // Then
+        XCTAssertEqual(startOfDay, expectedStartOfDay, "The start of the day should be the same")
+    }
+    
+    func testEndOfDay() {
+        // Given
+        // Given
+        let calendar = Calendar.current
+        let date = calendar.date(from: DateComponents(year: 1974, month: 10, day: 4, hour: 13, minute: 30, second: 0))!
+        let expectedEndOfDay = calendar.date(from: DateComponents(year: 1974, month: 10, day: 4, hour: 23, minute: 59, second: 59))!
+        
+        // When
+        let endOfDay = date.endOfDay
+        
+        // Then
+        XCTAssertEqual(endOfDay, expectedEndOfDay, "The end of the day should be the same")
+    }
+    
     func testFormat() {
         let date = Date(timeIntervalSince1970: 0) // 1st Jan 1970
         let formattedDate = date.formatted("yyyy-MM-dd")
