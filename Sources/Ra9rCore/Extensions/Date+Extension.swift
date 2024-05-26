@@ -8,15 +8,42 @@
 import Foundation
 
 extension Date {
+    /// Returns the date for the first of the month for a given date
+    public var startOfMonth: Date {
+        Calendar.current.dateInterval(of: .month, for: self)!.start.startOfDay
+    }
+    
+    /// Returns the last date for the month for a given date
+    public var endOfMonth: Date {
+        let lastDay = Calendar.current.dateInterval(of: .month, for: self)!.end
+        return Calendar.current.date(byAdding: .day, value: -1, to: lastDay)!.endOfDay
+    }
+    
     /// Returns the start of day e.g. 00:00:00
     public var startOfDay: Date {
         return Calendar.current.startOfDay(for: self)
     }
     
     /// Returns the end of day e.g. 23:59:59
-    public var endOfDay: Date? {
+    public var endOfDay: Date {
         let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)
-        return Calendar.current.date(byAdding: .second, value: -1, to: startOfNextDay ?? self)
+        return Calendar.current.date(byAdding: .second, value: -1, to: startOfNextDay ?? self)!
+    }
+    
+    /// Returns `true` if date is today
+    public var isToday: Bool {
+        let calendar = Calendar.current
+        return calendar.isDateInToday(self)
+    }
+    
+    /// Returns `true` if date is yesterday
+    public var isYesterday: Bool {
+        let calendar = Calendar.current
+        return calendar.isDateInYesterday(self)
+    }
+    
+    public var inFuture: Bool {
+        return self.endOfDay > .now.endOfDay
     }
     
     /// Formats the date into a string representation based on the specified format pattern.
@@ -92,6 +119,12 @@ extension Date {
         }
     }
     
+    /// Returns the number of days in the month of this date
+    public var numberOfDaysInMonth: Int {
+        Calendar.current.component(.day, from: endOfMonth)
+    }
+    
+    /// Returns an array of the dates of the week the date is contained within.
     public var weekDates: [Date] {
         var calendar = Calendar.current
         calendar.firstWeekday = 2 // Set the week to start on Monday
