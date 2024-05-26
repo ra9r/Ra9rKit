@@ -30,6 +30,14 @@ extension Date {
         return Calendar.current.date(byAdding: .second, value: -1, to: startOfNextDay ?? self)!
     }
     
+    /// Returns that locale appropriate start of week given the date
+    public var startOfWeek: Date {
+        var calendar = Calendar.current
+        
+        // Find the start of the week for the given date
+        return calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))!
+    }
+    
     /// Returns `true` if date is today
     public var isToday: Bool {
         let calendar = Calendar.current
@@ -126,20 +134,13 @@ extension Date {
     
     /// Returns an array of the dates of the week the date is contained within.
     public var weekDates: [Date] {
-        var calendar = Calendar.current
-//        calendar.firstWeekday = 2 // Set the week to start on Monday
-        
-        // Find the start of the week for the given date
-        guard let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else {
-            return []
-        }
-        
+        var day = startOfWeek
         // Create an array to hold dates for the whole week
         var week: [Date] = []
         
         // Populate the array with dates from Monday to Sunday
         for i in 0..<7 {
-            if let date = calendar.date(byAdding: .day, value: i, to: startOfWeek) {
+            if let date = Calendar.current.date(byAdding: .day, value: i, to: day) {
                 week.append(date)
             }
         }
