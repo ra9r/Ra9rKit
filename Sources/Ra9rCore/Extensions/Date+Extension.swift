@@ -127,7 +127,7 @@ extension Date {
     /// Returns an array of the dates of the week the date is contained within.
     public var weekDates: [Date] {
         var calendar = Calendar.current
-        calendar.firstWeekday = 2 // Set the week to start on Monday
+//        calendar.firstWeekday = 2 // Set the week to start on Monday
         
         // Find the start of the week for the given date
         guard let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else {
